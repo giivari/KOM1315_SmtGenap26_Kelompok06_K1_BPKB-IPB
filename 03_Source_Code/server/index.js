@@ -1,6 +1,8 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 require('dotenv').config();
 
 const authRoutes = require('./src/routes/auth');
@@ -14,19 +16,149 @@ const { auditMiddleware } = require('./src/middleware/audit');
 const app = express();
 const PORT = process.env.PORT || 5000;
 
-// Middleware
-app.use(cors({
-  origin: true,
-  credentials: true,
+// =============================================
+// SECURITY MIDDLEWARE LAYER 1: Headers + CORS
+// =============================================
+
+/**
+ * Helmet — Security Headers
+ * 
+ * Menambahkan HTTP security headers untuk mencegah:
+ * - Clickjacking (X-Frame-Options: DENY)
+ * - MIME sniffing (X-Content-Type-Options: nosniff)
+ * - XSS (Content-Security-Policy)
+ * - Protocol downgrade (Strict-Transport-Security)
+ */
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      styleSrc: ["'self'", "'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "blob:", "https:"],
+      connectSrc: ["'self'", process.env.CLIENT_URL || 'http://localhost:5174'],
+      fontSrc: ["'self'", "https:", "data:"],
+      objectSrc: ["'none'"],
+      mediaSrc: ["'self'"],
+      frameSrc: ["'none'"],
+    },
+  },
+  crossOriginEmbedderPolicy: false,  // Nonaktifkan agar gambar bisa dimuat
+  hsts: {
+    maxAge: 31536000,           // 1 tahun
+    includeSubDomains: true,
+    preload: true,
+  },
 }));
+
+/**
+ * CORS — Cross-Origin Resource Sharing
+ * 
+ * Perbaikan: Membatasi origin hanya ke frontend URL yang diizinkan
+ * Sebelumnya: origin: true (menerima semua domain — tidak aman)
+ * Sekarang: hanya CLIENT_URL yang diizinkan
+ */
+const allowedOrigins = [
+  process.env.CLIENT_URL || 'http://localhost:5174',
+  'http://localhost:5173',
+  'http://localhost:3000',
+];
+
+app.use(cors({
+  origin: function (origin, callback) {
+    // Allow requests with no origin (mobile apps, curl, Postman)
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
+  credentials: true,
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+}));
+
+// =============================================
+// SECURITY MIDDLEWARE LAYER 2: Rate Limiting
+// =============================================
+
+/**
+ * Global Rate Limiter
+ * Membatasi setiap IP ke 100 request per 15 menit
+ */
+const globalLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,  // 15 menit
+  max: 100,                   // Max 100 requests per window
+  message: {
+    error: 'Too many requests from this IP, please try again after 15 minutes.',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+/**
+ * Auth Rate Limiter (Strict)
+ * Membatasi endpoint login/register ke 5 request per 15 menit per IP
+ * 
+ * Mitigasi: Brute-force attack pada login
+ * - Penyerang hanya bisa mencoba 5 password per 15 menit
+ * - Dikombinasikan dengan bcrypt (250ms/hash), sangat efektif
+ */
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,  // 15 menit
+  max: 5,                     // Max 5 percobaan per window
+  message: {
+    error: 'Too many login attempts. Please try again after 15 minutes.',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+  // Hanya hitung request yang gagal (4xx status)
+  skipSuccessfulRequests: true,
+});
+
+/**
+ * OTP Rate Limiter
+ * Membatasi resend OTP ke 3 request per 15 menit
+ */
+const otpLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000,
+  max: 3,
+  message: {
+    error: 'Too many OTP requests. Please try again later.',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
+
+// =============================================
+// STANDARD MIDDLEWARE
+// =============================================
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Serve uploaded files
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// =============================================
+// SECURITY MIDDLEWARE LAYER 3: Audit Logging
+// =============================================
+
 // Audit middleware - logs all API requests
 app.use('/api', auditMiddleware);
+
+// =============================================
+// ROUTES (with rate limiting applied per-route)
+// =============================================
+
+// Auth routes with strict rate limiting
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth/register', authLimiter);
+app.use('/api/auth/verify-otp', authLimiter);
+app.use('/api/auth/resend-otp', otpLimiter);
+
+// Apply global rate limiter to all other API routes
+app.use('/api', globalLimiter);
 
 // Routes
 app.use('/api/auth', authRoutes);
@@ -45,6 +177,7 @@ app.listen(PORT, () => {
   console.log(`🚀 BPKB IPB Server running on port ${PORT}`);
   console.log(`📡 API: http://localhost:${PORT}/api`);
   console.log(`🌐 Client: ${process.env.CLIENT_URL || 'http://localhost:5173'}`);
+  console.log(`🔒 Security: Helmet ✅ | Rate Limiting ✅ | CORS restricted ✅`);
 });
 
 module.exports = app;

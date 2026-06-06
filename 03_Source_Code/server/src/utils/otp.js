@@ -1,10 +1,42 @@
 const nodemailer = require('nodemailer');
+const crypto = require('crypto');
+const { hashSHA256, verifySHA256 } = require('./crypto');
 
 /**
- * Generate a random 6-digit OTP code
+ * Generate a random 6-digit OTP code using CSPRNG
+ * 
+ * Perbaikan: Menggunakan crypto.randomInt() sebagai pengganti Math.random()
+ * - crypto.randomInt() menggunakan Cryptographically Secure Pseudo-Random Number Generator
+ * - Math.random() tidak dirancang untuk keamanan (predictable under certain conditions)
+ * 
+ * @returns {string} 6-digit OTP code (plaintext, untuk dikirim via email)
  */
 function generateOTP() {
-  return Math.floor(100000 + Math.random() * 900000).toString();
+  return crypto.randomInt(100000, 999999).toString();
+}
+
+/**
+ * Hash an OTP code using SHA-256 before storing in database
+ * 
+ * Mengapa hash OTP?
+ * - Jika database bocor, penyerang tidak bisa melihat OTP plaintext yang masih valid
+ * - SHA-256 cukup karena OTP sudah dilindungi oleh: single-use + expiry (5 menit)
+ * 
+ * @param {string} otpCode - Plaintext OTP code
+ * @returns {string} SHA-256 hex hash
+ */
+function hashOTP(otpCode) {
+  return hashSHA256(otpCode);
+}
+
+/**
+ * Verify an OTP code against its stored hash
+ * @param {string} inputCode - User's input OTP
+ * @param {string} storedHash - SHA-256 hash from database
+ * @returns {boolean} True if OTP matches
+ */
+function verifyOTP(inputCode, storedHash) {
+  return verifySHA256(inputCode, storedHash);
 }
 
 /**
@@ -94,4 +126,4 @@ async function sendOTPEmail(to, code, userName = 'User') {
   return info;
 }
 
-module.exports = { generateOTP, sendOTPEmail };
+module.exports = { generateOTP, hashOTP, verifyOTP, sendOTPEmail };

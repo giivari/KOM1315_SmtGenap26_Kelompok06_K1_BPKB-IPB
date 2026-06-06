@@ -2,11 +2,58 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const { PrismaClient } = require('@prisma/client');
-const { generateOTP, sendOTPEmail } = require('../utils/otp');
+const { generateOTP, hashOTP, verifyOTP, sendOTPEmail } = require('../utils/otp');
+const { signData } = require('../utils/crypto');
 const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
 const prisma = new PrismaClient();
+
+// =============================================
+// PASSWORD VALIDATION UTILITY
+// =============================================
+
+/**
+ * Validate password strength on the backend
+ * 
+ * Kriteria:
+ * - Minimal 8 karakter
+ * - Mengandung minimal 1 huruf besar
+ * - Mengandung minimal 1 huruf kecil
+ * - Mengandung minimal 1 angka
+ * 
+ * @param {string} password 
+ * @returns {{ valid: boolean, message: string }}
+ */
+function validatePassword(password) {
+  if (!password || password.length < 8) {
+    return { valid: false, message: 'Password must be at least 8 characters long.' };
+  }
+  if (!/[A-Z]/.test(password)) {
+    return { valid: false, message: 'Password must contain at least one uppercase letter.' };
+  }
+  if (!/[a-z]/.test(password)) {
+    return { valid: false, message: 'Password must contain at least one lowercase letter.' };
+  }
+  if (!/[0-9]/.test(password)) {
+    return { valid: false, message: 'Password must contain at least one number.' };
+  }
+  return { valid: true, message: 'OK' };
+}
+
+/**
+ * Validate email format
+ * @param {string} email 
+ * @returns {boolean}
+ */
+function validateEmail(email) {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+}
+
+// =============================================
+// ROUTES
+// =============================================
 
 /**
  * POST /api/auth/register
@@ -20,13 +67,24 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ error: 'Name, email, and password are required.' });
     }
 
+    // Validate email format
+    if (!validateEmail(email)) {
+      return res.status(400).json({ error: 'Invalid email format.' });
+    }
+
+    // Validate password strength (backend validation)
+    const passwordCheck = validatePassword(password);
+    if (!passwordCheck.valid) {
+      return res.status(400).json({ error: passwordCheck.message });
+    }
+
     // Check if user exists
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
       return res.status(409).json({ error: 'Email already registered.' });
     }
 
-    // Hash password
+    // Hash password with bcrypt (salt rounds = 12)
     const hashedPassword = await bcrypt.hash(password, 12);
 
     // Create user
@@ -100,21 +158,24 @@ router.post('/login', async (req, res) => {
       data: { used: true }
     });
 
-    // Generate OTP
-    const otpCode = generateOTP();
+    // Generate OTP (plaintext for email, hash for database)
+    const otpPlaintext = generateOTP();
+    const otpHash = hashOTP(otpPlaintext);
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes
 
+    // Store HASHED OTP in database (never store plaintext)
     await prisma.otpCode.create({
       data: {
         userId: user.id,
-        code: otpCode,
+        code: otpHash, // SHA-256 hash, bukan plaintext
         expiresAt,
       }
     });
 
-    // Send OTP via email
+    // Send plaintext OTP via email
     try {
-      await sendOTPEmail(user.email, otpCode, user.name);
+      console.log(`\n\n[DEV] OTP Code for ${user.email} is: ${otpPlaintext}\n\n`);
+      await sendOTPEmail(user.email, otpPlaintext, user.name);
     } catch (emailError) {
       console.error('Email sending failed:', emailError);
       // Still return success - OTP is in the console for dev
@@ -198,7 +259,8 @@ router.post('/verify-otp', async (req, res) => {
       return res.status(401).json({ error: 'OTP expired or invalid. Please request a new one.' });
     }
 
-    if (otpRecord.code !== code) {
+    // Verify OTP using SHA-256 hash comparison (bukan plaintext)
+    if (!verifyOTP(code, otpRecord.code)) {
       await prisma.authEvent.create({
         data: {
           userId,
@@ -222,12 +284,25 @@ router.post('/verify-otp', async (req, res) => {
       select: { id: true, name: true, email: true, role: true }
     });
 
-    // Issue full JWT
+    // Issue full JWT (access token)
     const accessToken = jwt.sign(
       { userId: user.id, role: user.role },
       process.env.JWT_SECRET,
       { expiresIn: '24h' }
     );
+
+    // Sign the login action with RSA digital signature for non-repudiation
+    let loginSignature = null;
+    try {
+      loginSignature = signData({
+        action: 'LOGIN_SUCCESS',
+        userId: user.id,
+        email: user.email,
+        timestamp: new Date().toISOString(),
+      });
+    } catch (signError) {
+      console.warn('Digital signature skipped:', signError.message);
+    }
 
     // Log successful events
     await prisma.authEvent.create({
@@ -254,6 +329,7 @@ router.post('/verify-otp', async (req, res) => {
       message: 'Login successful.',
       accessToken,
       user,
+      ...(loginSignature && { signature: loginSignature }),
     });
   } catch (error) {
     console.error('OTP verify error:', error);
@@ -293,17 +369,19 @@ router.post('/resend-otp', async (req, res) => {
       data: { used: true }
     });
 
-    // Generate new OTP
-    const otpCode = generateOTP();
+    // Generate new OTP (plaintext for email, hash for DB)
+    const otpPlaintext = generateOTP();
+    const otpHash = hashOTP(otpPlaintext);
     const expiresAt = new Date(Date.now() + 5 * 60 * 1000);
 
     await prisma.otpCode.create({
-      data: { userId, code: otpCode, expiresAt }
+      data: { userId, code: otpHash, expiresAt }
     });
 
     // Send OTP via email
     try {
-      await sendOTPEmail(user.email, otpCode, user.name);
+      console.log(`\n\n[DEV] OTP Code for ${user.email} is: ${otpPlaintext}\n\n`);
+      await sendOTPEmail(user.email, otpPlaintext, user.name);
     } catch (emailError) {
       console.error('Email sending failed:', emailError);
     }
