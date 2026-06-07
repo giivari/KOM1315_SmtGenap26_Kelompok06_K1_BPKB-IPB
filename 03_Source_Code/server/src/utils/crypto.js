@@ -30,16 +30,31 @@ ensureKeysExist();
 const privateKey = fs.readFileSync(privateKeyPath, 'utf8');
 
 /**
- * Fungsi untuk menghasilkan Hash SHA-256 dari teks laporan
+ * Fungsi untuk menghasilkan Hash SHA-256
+ * (Telah diubah namanya menjadi hashSHA256 agar cocok dengan otp.js)
  */
-function generateHash(dataString) {
-  return crypto.createHash('sha256').update(dataString).digest('hex');
+function hashSHA256(dataString) {
+  // Pastikan input berupa string
+  const data = typeof dataString === 'string' ? dataString : JSON.stringify(dataString);
+  return crypto.createHash('sha256').update(data).digest('hex');
+}
+
+/**
+ * Fungsi untuk memverifikasi Hash SHA-256
+ * (Ditambahkan karena dibutuhkan oleh otp.js untuk login)
+ */
+function verifySHA256(input, storedHash) {
+  const inputHash = hashSHA256(input);
+  return inputHash === storedHash;
 }
 
 /**
  * Fungsi untuk menandatangani data menggunakan Private Key (RSA)
  */
-function signData(dataString) {
+function signData(data) {
+  // Pastikan data diubah menjadi string (karena auth.js mengirimkan format JSON/Object)
+  const dataString = typeof data === 'string' ? data : JSON.stringify(data);
+  
   const signer = crypto.createSign('RSA-SHA256');
   signer.update(dataString);
   signer.end();
@@ -47,4 +62,5 @@ function signData(dataString) {
   return signer.sign(privateKey, 'base64');
 }
 
-module.exports = { generateHash, signData };
+// Export fungsi-fungsi dengan nama yang tepat
+module.exports = { hashSHA256, verifySHA256, signData };

@@ -2,7 +2,7 @@ const express = require('express');
 const { PrismaClient } = require('@prisma/client');
 const { authenticate } = require('../middleware/auth');
 const { authorize } = require('../middleware/authorize');
-const { generateHash, signData } = require('../utils/crypto_rsa'); // Import fungsi RSA
+const { generateHash, signData } = require('../utils/crypto'); // Import fungsi RSA
 
 const router = express.Router();
 const prisma = new PrismaClient();
