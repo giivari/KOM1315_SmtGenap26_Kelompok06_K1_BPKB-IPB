@@ -178,7 +178,9 @@ app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date().toISOString() });
 });
 
-console.log('PORT ENV =', process.env.PORT);
+console.log("PORT ENV =", process.env.PORT);
+console.log("NODE_ENV =", process.env.NODE_ENV);
+console.log("CLIENT_URL =", process.env.CLIENT_URL);
 
 app.listen(PORT, () => {
   console.log(`🚀 BPKB IPB Server running on port ${PORT}`);
