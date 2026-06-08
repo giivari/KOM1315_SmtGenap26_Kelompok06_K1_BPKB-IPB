@@ -185,6 +185,10 @@ console.log("PORT ENV =", process.env.PORT);
 console.log("NODE_ENV =", process.env.NODE_ENV);
 console.log("CLIENT_URL =", process.env.CLIENT_URL);
 
+app.get('/', (req, res) => {
+  res.status(200).send('BPKB IPB API is running');
+});
+
 const server = app.listen(PORT, () => {
   console.log("PORT ENV =", process.env.PORT);
   console.log("NODE_ENV =", process.env.NODE_ENV);
