@@ -3,7 +3,10 @@ const cors = require('cors');
 const path = require('path');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
-require('dotenv').config();
+
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config();
+}
 
 const authRoutes = require('./src/routes/auth');
 const articleRoutes = require('./src/routes/articles');
