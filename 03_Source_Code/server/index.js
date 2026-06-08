@@ -185,11 +185,24 @@ console.log("PORT ENV =", process.env.PORT);
 console.log("NODE_ENV =", process.env.NODE_ENV);
 console.log("CLIENT_URL =", process.env.CLIENT_URL);
 
-app.listen(PORT, () => {
+const server = app.listen(PORT, () => {
+  console.log("PORT ENV =", process.env.PORT);
+  console.log("NODE_ENV =", process.env.NODE_ENV);
+  console.log("CLIENT_URL =", process.env.CLIENT_URL);
+
   console.log(`🚀 BPKB IPB Server running on port ${PORT}`);
-  console.log(`📡 API: http://localhost:${PORT}/api`);
-  console.log(`🌐 Client: ${process.env.CLIENT_URL || 'http://localhost:5173'}`);
-  console.log(`🔒 Security: Helmet ✅ | Rate Limiting ✅ | CORS restricted ✅`);
+});
+
+server.on("error", (err) => {
+  console.error("SERVER ERROR:", err);
+});
+
+process.on("uncaughtException", (err) => {
+  console.error("UNCAUGHT EXCEPTION:", err);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.error("UNHANDLED REJECTION:", err);
 });
 
 module.exports = app;
