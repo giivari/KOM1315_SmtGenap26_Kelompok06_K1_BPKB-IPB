@@ -21,6 +21,7 @@ const uploadRoutes = require('./src/routes/upload');
 const { auditMiddleware } = require('./src/middleware/audit');
 
 const app = express();
+app.set('trust proxy', 1); // Wajib untuk Railway / Load Balancer agar express-rate-limit tidak error
 const PORT = process.env.PORT || 5000;
 
 // =============================================

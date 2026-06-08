@@ -4,7 +4,8 @@ const prisma = new PrismaClient();
 
 // Kunci rahasia 32 karakter (256-bit) untuk AES-256
 // Di lingkungan produksi (production), variabel ini WAJIB ditaruh di dalam file .env
-const SECRET_KEY = process.env.ENCRYPTION_KEY || 'BpkbIpbSecretKeyUntukAes256Crypt';
+const RAW_KEY = process.env.ENCRYPTION_KEY || 'BpkbIpbSecretKeyUntukAes256Crypt';
+const SECRET_KEY = crypto.createHash('sha256').update(String(RAW_KEY)).digest();
 
 /**
  * Fungsi bantuan untuk mengenkripsi IP Address menggunakan AES-256-CBC
