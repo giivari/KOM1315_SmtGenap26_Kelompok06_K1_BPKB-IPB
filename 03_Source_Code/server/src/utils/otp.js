@@ -60,6 +60,7 @@ async function createTransporter() {
         user: smtpUser,
         pass: smtpPass,
       },
+      family: 4, // WAJIB untuk Railway karena jaringan keluar IPv6 ditutup (menyebabkan ENETUNREACH)
     });
   }
 
