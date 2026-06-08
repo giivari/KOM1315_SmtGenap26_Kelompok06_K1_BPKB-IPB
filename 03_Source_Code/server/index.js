@@ -192,6 +192,14 @@ app.get('/', (req, res) => {
   res.status(200).send('BPKB IPB API is running');
 });
 
+process.on('uncaughtException', (err) => {
+  console.error('UNCAUGHT EXCEPTION:', err);
+});
+
+process.on('unhandledRejection', (err) => {
+  console.error('UNHANDLED REJECTION:', err);
+});
+
 const server = app.listen(PORT, () => {
   console.log("PORT ENV =", process.env.PORT);
   console.log("NODE_ENV =", process.env.NODE_ENV);
