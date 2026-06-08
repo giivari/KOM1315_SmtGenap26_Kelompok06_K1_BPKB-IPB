@@ -1,3 +1,5 @@
+console.log("=== APP STARTING ===");
+
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -200,7 +202,7 @@ process.on('unhandledRejection', (err) => {
   console.error('UNHANDLED REJECTION:', err);
 });
 
-const server = app.listen(PORT, () => {
+const server = app.listen(PORT, '0.0.0.0', () => {
   console.log("PORT ENV =", process.env.PORT);
   console.log("NODE_ENV =", process.env.NODE_ENV);
   console.log("CLIENT_URL =", process.env.CLIENT_URL);
