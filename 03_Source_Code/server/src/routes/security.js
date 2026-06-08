@@ -7,8 +7,8 @@ const { authorize } = require('../middleware/authorize');
 const router = express.Router();
 const prisma = new PrismaClient();
 
-// Kunci rahasia harus sama persis dengan yang ada di audit.js
-const SECRET_KEY = process.env.ENCRYPTION_KEY || 'BpkbIpbSecretKeyUntukAes256Crypt';
+const RAW_KEY = process.env.ENCRYPTION_KEY || 'BpkbIpbSecretKeyUntukAes256Crypt';
+const SECRET_KEY = crypto.createHash('sha256').update(String(RAW_KEY)).digest();
 
 /**
  * Fungsi bantuan untuk mendekripsi IP Address menggunakan AES-256-CBC
