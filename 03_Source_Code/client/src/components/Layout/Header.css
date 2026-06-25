@@ -45,6 +45,10 @@
   font-size: 0.95rem;
   transition: all var(--transition-base);
   position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
 }
 
 .nav-link:hover {

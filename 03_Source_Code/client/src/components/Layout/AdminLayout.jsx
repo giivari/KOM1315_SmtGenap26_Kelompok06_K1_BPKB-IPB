@@ -1,5 +1,6 @@
 import { Link, useLocation, Outlet } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { LayoutDashboard, Newspaper, Camera, Settings, ShieldCheck, Globe, LogOut } from 'lucide-react';
 import './AdminLayout.css';
 
 export default function AdminLayout() {
@@ -9,11 +10,11 @@ export default function AdminLayout() {
   const isActive = (path) => location.pathname === path || location.pathname.startsWith(path + '/');
 
   const menuItems = [
-    { path: '/admin', label: 'Dashboard', icon: '📊', exact: true },
-    { path: '/admin/articles', label: 'Articles', icon: '📰' },
-    { path: '/admin/documentation', label: 'Documentation', icon: '📸' },
-    { path: '/admin/operations', label: 'Operations', icon: '⚙️' },
-    { path: '/admin/security', label: 'Security Dashboard', icon: '🛡️' },
+    { path: '/admin', label: 'Dashboard', icon: <LayoutDashboard size={20} />, exact: true },
+    { path: '/admin/articles', label: 'Articles', icon: <Newspaper size={20} /> },
+    { path: '/admin/documentation', label: 'Documentation', icon: <Camera size={20} /> },
+    { path: '/admin/operations', label: 'Operations', icon: <Settings size={20} /> },
+    { path: '/admin/security', label: 'Security Dashboard', icon: <ShieldCheck size={20} /> },
   ];
 
   return (
@@ -54,8 +55,8 @@ export default function AdminLayout() {
             </div>
           </div>
           <div className="sidebar-actions">
-            <Link to="/" className="sidebar-action-btn">🌐 Site</Link>
-            <button onClick={logout} className="sidebar-action-btn logout">🚪 Logout</button>
+            <Link to="/" className="sidebar-action-btn"><Globe size={18} className="inline-icon" /> Site</Link>
+            <button onClick={logout} className="sidebar-action-btn logout"><LogOut size={18} className="inline-icon" /> Logout</button>
           </div>
         </div>
       </aside>
