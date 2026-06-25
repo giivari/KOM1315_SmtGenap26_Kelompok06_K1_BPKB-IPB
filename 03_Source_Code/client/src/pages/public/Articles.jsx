@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { articlesAPI } from '../../services/api';
+import { Newspaper, PenLine } from 'lucide-react';
 import './Articles.css';
 
 const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
@@ -31,13 +32,13 @@ export default function Articles() {
               {article.imagePath ? (
                 <div className="article-item-img" style={{backgroundImage:`url(${API_BASE}${article.imagePath})`}}></div>
               ) : (
-                <div className="article-item-img article-placeholder">📰</div>
+                <div className="article-item-img article-placeholder"><Newspaper size={48} color="var(--color-primary-300)" /></div>
               )}
               <div className="article-item-body">
                 <span className="article-date">{new Date(article.date).toLocaleDateString('id-ID',{year:'numeric',month:'long',day:'numeric'})}</span>
                 <h3>{article.name}</h3>
                 <p>{article.content?.substring(0,150)}...</p>
-                {article.author && <span className="article-author">✍️ {article.author}</span>}
+                {article.author && <span className="article-author"><PenLine size={14} className="inline-icon" /> {article.author}</span>}
               </div>
             </Link>
           ))}

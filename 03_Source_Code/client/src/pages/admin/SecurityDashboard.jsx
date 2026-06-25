@@ -14,6 +14,7 @@ import {
 } from 'chart.js';
 import { Line, Bar, Doughnut } from 'react-chartjs-2';
 import { securityAPI } from '../../services/api';
+import { Users, Lock, ShieldAlert, ClipboardList } from 'lucide-react';
 import './SecurityDashboard.css';
 
 // Register ChartJS components
@@ -142,28 +143,28 @@ export default function SecurityDashboard() {
       {/* SUMMARY STATS */}
       <div className="dashboard-grid mb-32">
         <div className="stat-card">
-          <div className="stat-icon" style={{background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6'}}>👥</div>
+          <div className="stat-icon" style={{background: 'rgba(59, 130, 246, 0.15)', color: '#3b82f6'}}><Users size={28} /></div>
           <div>
             <div className="stat-value">{summary.totalUsers}</div>
             <div className="stat-label">Total Users</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{background: 'rgba(34, 197, 94, 0.15)', color: '#22c55e'}}>🔐</div>
+          <div className="stat-icon" style={{background: 'rgba(34, 197, 94, 0.15)', color: '#22c55e'}}><Lock size={28} /></div>
           <div>
             <div className="stat-value">{summary.todayAuthEvents}</div>
             <div className="stat-label">Auth Events Today</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{background: 'rgba(239, 68, 68, 0.15)', color: '#ef4444'}}>⛔</div>
+          <div className="stat-icon" style={{background: 'rgba(239, 68, 68, 0.15)', color: '#ef4444'}}><ShieldAlert size={28} /></div>
           <div>
             <div className="stat-value">{summary.deniedAuthzEvents}</div>
             <div className="stat-label">Blocked Access (30d)</div>
           </div>
         </div>
         <div className="stat-card">
-          <div className="stat-icon" style={{background: 'rgba(139, 92, 246, 0.15)', color: '#8b5cf6'}}>📋</div>
+          <div className="stat-icon" style={{background: 'rgba(139, 92, 246, 0.15)', color: '#8b5cf6'}}><ClipboardList size={28} /></div>
           <div>
             <div className="stat-value">{summary.todayAuditLogs}</div>
             <div className="stat-label">API Requests Today</div>

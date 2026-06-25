@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { articlesAPI, uploadAPI } from '../../services/api';
 import { toast } from 'sonner';
-import { Newspaper, Clock, User, CheckCircle, XCircle, Trash2, Edit, FileText, Check, X, AlertCircle } from 'lucide-react';
+import { Newspaper, Clock, User, CheckCircle, XCircle, Trash2, Edit, FileText, Check, X, AlertCircle, Mail } from 'lucide-react';
 
 const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
@@ -310,7 +310,7 @@ export default function AdminArticles() {
                         </div>
                         <div style={{ fontSize: '0.85rem', color: 'var(--color-text-muted)', marginBottom: '12px', display: 'flex', gap: '16px', flexWrap: 'wrap' }}>
                           <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><User size={14} /> {article.submitter?.name || 'Unknown'}</span>
-                          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>📧 {article.submitter?.email}</span>
+                          <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Mail size={14} /> {article.submitter?.email}</span>
                           <span style={{ display: 'flex', alignItems: 'center', gap: '4px' }}><Clock size={14} /> {new Date(article.createdAt).toLocaleDateString('id-ID', { year: 'numeric', month: 'long', day: 'numeric' })}</span>
                         </div>
                         {article.imagePath && (

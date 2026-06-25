@@ -6,6 +6,7 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 import { articlesAPI, documentationAPI, operationsAPI } from '../../services/api';
+import { Newspaper, Camera } from 'lucide-react';
 import './Home.css';
 
 const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
@@ -74,7 +75,7 @@ export default function Home() {
                 )}
                 {!article.imagePath && (
                   <div className="news-card-image news-card-image-placeholder">
-                    <span>📰</span>
+                    <Newspaper size={48} color="var(--color-primary-300)" />
                   </div>
                 )}
                 <div className="news-card-body">
@@ -119,7 +120,7 @@ export default function Home() {
                     {doc.photoPath ? (
                       <img src={doc.photoPath?.startsWith('http') ? doc.photoPath : `${API_BASE}${doc.photoPath}`} alt={doc.description} className="doc-card-img" />
                     ) : (
-                      <div className="doc-card-img doc-card-placeholder">📸</div>
+                      <div className="doc-card-img doc-card-placeholder"><Camera size={48} color="var(--color-primary-300)" /></div>
                     )}
                     <div className="doc-card-body">
                       <h4>{doc.description}</h4>

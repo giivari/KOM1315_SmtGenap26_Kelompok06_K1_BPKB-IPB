@@ -1,3 +1,4 @@
+import { Mail, Phone, Instagram, MapPin } from 'lucide-react';
 import './Footer.css';
 
 export default function Footer() {
@@ -9,16 +10,16 @@ export default function Footer() {
           <p className="footer-desc">Badan Pengembangan Kampus Berkelanjutan IPB University</p>
           <div className="footer-contact">
             <h5>Contact Us:</h5>
-            <a href="mailto:bpkb@apps.ipb.ac.id?subject=Pertanyaan%20dari%20Website">📧 bpkb@apps.ipb.ac.id</a>
-            <a href="tel:+6281454575">📞 +62-8145-4575</a>
-            <a href="https://www.instagram.com/bpkbipb" target="_blank" rel="noopener noreferrer">📷 @bpkbipb</a>
+            <a href="mailto:bpkb@apps.ipb.ac.id?subject=Pertanyaan%20dari%20Website"><Mail size={16} className="inline-icon" /> bpkb@apps.ipb.ac.id</a>
+            <a href="tel:+6281454575"><Phone size={16} className="inline-icon" /> +62-8145-4575</a>
+            <a href="https://www.instagram.com/bpkbipb" target="_blank" rel="noopener noreferrer"><Instagram size={16} className="inline-icon" /> @bpkbipb</a>
           </div>
         </div>
 
         <div className="footer-section">
           <h4 className="footer-title">Location</h4>
           <a className="footer-address" href="https://maps.app.goo.gl/WREwn5KjrmAi8rdMA" target="_blank" rel="noopener noreferrer">
-            📍 Gedung B Perpustakaan Lt. 4, Kampus IPB Dramaga, Dramaga, Bogor, Jawa Barat, Indonesia, 16680
+            <MapPin size={16} className="inline-icon" /> Gedung B Perpustakaan Lt. 4, Kampus IPB Dramaga, Dramaga, Bogor, Jawa Barat, Indonesia, 16680
           </a>
         </div>
 
