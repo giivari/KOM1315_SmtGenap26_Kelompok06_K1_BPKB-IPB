@@ -121,7 +121,7 @@ export default function AdminDocs() {
             </div>
             {formData.photoPath && (
               <div style={{marginTop: '12px'}}>
-                <img src={`${API_BASE}${formData.photoPath}`} alt="Preview" style={{height: '150px', borderRadius: '8px', objectFit: 'cover'}} />
+                <img src={formData.photoPath.startsWith('http') ? formData.photoPath : `${API_BASE}${formData.photoPath}`} alt="Preview" style={{height: '150px', borderRadius: '8px', objectFit: 'cover'}} />
               </div>
             )}
           </div>
@@ -156,7 +156,7 @@ export default function AdminDocs() {
                 <tr key={doc.id}>
                   <td style={{width: '120px'}}>
                     {doc.photoPath ? (
-                      <img src={`${API_BASE}${doc.photoPath}`} alt="Doc" style={{width: '100px', height: '60px', objectFit: 'cover', borderRadius: '4px'}} />
+                      <img src={doc.photoPath.startsWith('http') ? doc.photoPath : `${API_BASE}${doc.photoPath}`} alt="Doc" style={{width: '100px', height: '60px', objectFit: 'cover', borderRadius: '4px'}} />
                     ) : (
                       <div style={{width: '100px', height: '60px', background: '#eee', borderRadius: '4px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}>No Image</div>
                     )}

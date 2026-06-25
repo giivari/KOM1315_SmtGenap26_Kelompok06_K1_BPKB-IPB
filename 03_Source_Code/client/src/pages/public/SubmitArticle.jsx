@@ -153,7 +153,7 @@ export default function SubmitArticle() {
               </div>
               {formData.imagePath && (
                 <div className="image-preview-box">
-                  <img src={`${API_BASE}${formData.imagePath}`} alt="Preview" />
+                  <img src={formData.imagePath.startsWith('http') ? formData.imagePath : `${API_BASE}${formData.imagePath}`} alt="Preview" />
                   <button
                     type="button"
                     className="remove-btn"

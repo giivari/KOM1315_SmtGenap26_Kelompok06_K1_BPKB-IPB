@@ -204,7 +204,7 @@ export default function AdminArticles() {
                 </div>
                 {formData.imagePath && (
                   <div style={{marginTop: '12px'}}>
-                    <img src={`${API_BASE}${formData.imagePath}`} alt="Preview" style={{height: '100px', borderRadius: '8px', objectFit: 'cover'}} />
+                    <img src={formData.imagePath.startsWith('http') ? formData.imagePath : `${API_BASE}${formData.imagePath}`} alt="Preview" style={{height: '100px', borderRadius: '8px', objectFit: 'cover'}} />
                     <button type="button" onClick={() => setFormData({...formData, imagePath: ''})} className="btn-link text-danger" style={{marginLeft:'12px'}}>Hapus Gambar</button>
                   </div>
                 )}

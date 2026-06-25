@@ -187,7 +187,7 @@ export default function Aspirations() {
                       {uploading && <span className="text-primary" style={{ marginTop: '8px', display: 'block' }}>Uploading...</span>}
                       {formData.imagePath && (
                         <div style={{ marginTop: '12px' }}>
-                          <img src={`${API_BASE}${formData.imagePath}`} alt="Preview" style={{ height: '100px', borderRadius: '8px', objectFit: 'cover' }} />
+                          <img src={formData.imagePath.startsWith('http') ? formData.imagePath : `${API_BASE}${formData.imagePath}`} alt="Preview" style={{ height: '100px', borderRadius: '8px', objectFit: 'cover' }} />
                           <button
                             type="button"
                             onClick={() => { setFormData({ ...formData, imagePath: '' }); if(fileInputRef.current) fileInputRef.current.value=''; }}
@@ -240,7 +240,7 @@ export default function Aspirations() {
             return (
               <div key={aspiration.id} className={`aspiration-card cat-${aspiration.category}`}>
                 {aspiration.imagePath && (
-                  <img src={`${API_BASE}${aspiration.imagePath}`} alt={aspiration.title} className="aspiration-card-image" />
+                  <img src={aspiration.imagePath.startsWith('http') ? aspiration.imagePath : `${API_BASE}${aspiration.imagePath}`} alt={aspiration.title} className="aspiration-card-image" />
                 )}
                 <div className="aspiration-card-body">
                   <div className="aspiration-card-header">

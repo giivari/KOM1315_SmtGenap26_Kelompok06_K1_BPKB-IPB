@@ -117,7 +117,7 @@ export default function Home() {
                 <SwiperSlide key={doc.id}>
                   <div className="doc-card card">
                     {doc.photoPath ? (
-                      <img src={`${API_BASE}${doc.photoPath}`} alt={doc.description} className="doc-card-img" />
+                      <img src={doc.photoPath?.startsWith('http') ? doc.photoPath : `${API_BASE}${doc.photoPath}`} alt={doc.description} className="doc-card-img" />
                     ) : (
                       <div className="doc-card-img doc-card-placeholder">📸</div>
                     )}
