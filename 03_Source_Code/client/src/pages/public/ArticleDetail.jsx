@@ -5,7 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { toast } from 'sonner';
 import { ArrowLeft, Calendar, PenTool, MessageSquare, Send, Trash2, Lock } from 'lucide-react';
 
-const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+const API_BASE = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000');
 
 export default function ArticleDetail() {
   const { id } = useParams();

@@ -6,7 +6,7 @@ import { toast } from 'sonner';
 import { Wrench, ZapOff, Leaf, MessageCircle, MapPin, User, Calendar, Plus, X, Send, LeafyGreen } from 'lucide-react';
 import './Aspirations.css';
 
-const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+const API_BASE = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000');
 
 const categories = [
   { value: 'laporan_kerusakan', label: 'Laporan Kerusakan', icon: Wrench, color: 'var(--color-danger)' },

@@ -4,7 +4,7 @@ import { articlesAPI } from '../../services/api';
 import { Newspaper, PenLine } from 'lucide-react';
 import './Articles.css';
 
-const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+const API_BASE = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000');
 
 export default function Articles() {
   const [articles, setArticles] = useState([]);

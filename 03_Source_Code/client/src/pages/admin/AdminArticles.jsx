@@ -3,7 +3,7 @@ import { articlesAPI, uploadAPI } from '../../services/api';
 import { toast } from 'sonner';
 import { Newspaper, Clock, User, CheckCircle, XCircle, Trash2, Edit, FileText, Check, X, AlertCircle, Mail } from 'lucide-react';
 
-const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+const API_BASE = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000');
 
 const statusConfig = {
   draft: { label: 'Draft', badge: 'badge-info' },

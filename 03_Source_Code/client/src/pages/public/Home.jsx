@@ -9,7 +9,7 @@ import { articlesAPI, documentationAPI, operationsAPI } from '../../services/api
 import { Newspaper, Camera } from 'lucide-react';
 import './Home.css';
 
-const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
+const API_BASE = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000');
 
 export default function Home() {
   const [articles, setArticles] = useState([]);
