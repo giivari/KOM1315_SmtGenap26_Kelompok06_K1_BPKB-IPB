@@ -1,11 +1,11 @@
 const express = require('express');
-const { PrismaClient } = require('@prisma/client');
+
 const crypto = require('crypto'); // Tambahkan modul crypto bawaan Node.js
 const { authenticate } = require('../middleware/auth');
 const { authorize } = require('../middleware/authorize');
 
 const router = express.Router();
-const prisma = new PrismaClient();
+const prisma = require('../utils/prisma');
 
 const RAW_KEY = process.env.ENCRYPTION_KEY || 'BpkbIpbSecretKeyUntukAes256Crypt';
 const SECRET_KEY = crypto.createHash('sha256').update(String(RAW_KEY)).digest();

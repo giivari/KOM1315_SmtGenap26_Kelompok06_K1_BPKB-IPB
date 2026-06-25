@@ -1,6 +1,6 @@
-const { PrismaClient } = require('@prisma/client');
+
 const crypto = require('crypto');
-const prisma = new PrismaClient();
+const prisma = require('../utils/prisma');
 
 // Kunci rahasia 32 karakter (256-bit) untuk AES-256
 // Di lingkungan produksi (production), variabel ini WAJIB ditaruh di dalam file .env

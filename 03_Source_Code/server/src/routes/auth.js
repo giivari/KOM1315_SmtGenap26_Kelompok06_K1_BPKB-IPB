@@ -1,13 +1,13 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { PrismaClient } = require('@prisma/client');
+
 const { generateOTP, hashOTP, verifyOTP, sendOTPEmail } = require('../utils/otp');
 const { signData } = require('../utils/crypto');
 const { authenticate } = require('../middleware/auth');
 
 const router = express.Router();
-const prisma = new PrismaClient();
+const prisma = require('../utils/prisma');
 
 // =============================================
 // PASSWORD VALIDATION UTILITY
