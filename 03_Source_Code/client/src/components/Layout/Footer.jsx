@@ -1,4 +1,4 @@
-import { Mail, Phone, Instagram, MapPin } from 'lucide-react';
+import { Mail, Phone, Camera, MapPin } from 'lucide-react';
 import './Footer.css';
 
 export default function Footer() {
@@ -12,7 +12,7 @@ export default function Footer() {
             <h5>Contact Us:</h5>
             <a href="mailto:bpkb@apps.ipb.ac.id?subject=Pertanyaan%20dari%20Website"><Mail size={16} className="inline-icon" /> bpkb@apps.ipb.ac.id</a>
             <a href="tel:+6281454575"><Phone size={16} className="inline-icon" /> +62-8145-4575</a>
-            <a href="https://www.instagram.com/bpkbipb" target="_blank" rel="noopener noreferrer"><Instagram size={16} className="inline-icon" /> @bpkbipb</a>
+            <a href="https://www.instagram.com/bpkbipb" target="_blank" rel="noopener noreferrer"><Camera size={16} className="inline-icon" /> @bpkbipb</a>
           </div>
         </div>
 
