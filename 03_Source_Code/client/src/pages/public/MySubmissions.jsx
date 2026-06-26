@@ -4,7 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { articlesAPI } from '../../services/api';
 import { FileText, Clock, CheckCircle, XCircle, Calendar, Inbox, Edit3 } from 'lucide-react';
 
-const API_BASE = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000');
+const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
 const statusConfig = {
   pending: { label: 'Menunggu Review', badge: 'badge-warning', Icon: Clock },

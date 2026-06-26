@@ -3,7 +3,7 @@ import { aspirationsAPI } from '../../services/api';
 import { toast } from 'sonner';
 import { Wrench, ZapOff, Leaf, MessageCircle, BarChart3, Clock, RefreshCw, CheckCircle, XCircle } from 'lucide-react';
 
-const API_BASE = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000');
+const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
 const categories = {
   laporan_kerusakan: { label: 'Laporan Kerusakan', icon: Wrench },

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { documentationAPI, uploadAPI } from '../../services/api';
 
-const API_BASE = import.meta.env.PROD ? '' : (import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000');
+const API_BASE = import.meta.env.VITE_API_URL?.replace('/api', '') || 'http://localhost:5000';
 
 export default function AdminDocs() {
   const [docs, setDocs] = useState([]);
